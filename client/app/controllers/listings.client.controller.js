@@ -94,11 +94,6 @@ angular.module('listings').controller('ListingsController', ['$scope', '$locatio
         Implement the remove function. If the removal is successful, navigate back to 'listing.list'. Otherwise, 
         display the error. 
        */
-       $scope.remove = function() {
-      /*
-        Implement the remove function. If the removal is successful, navigate back to 'listing.list'. Otherwise, 
-        display the error. 
-       */
        var id = $stateParams.listingId;
        Listings.delete(id)
               .then(function(response) {
@@ -108,16 +103,13 @@ angular.module('listings').controller('ListingsController', ['$scope', '$locatio
                 $scope.loading = false;
               });
     };
-    };
 
     $scope.getAllForMap = function(){ 
     // user-created function for map-listings.client.view.html
-      $scope.error = null;
 
-      /* set loader*/
       $scope.loading = true;
       $scope.listings = [];
-      /* Get all the listings, then push it to the scope */
+      // Get all the listings, then push it to the scope
       Listings.getAll()
             .then(function(response){
               $scope.loading = false; //remove loader
@@ -127,10 +119,12 @@ angular.module('listings').controller('ListingsController', ['$scope', '$locatio
             }
             });
 
+
       }, function(error){
         $scope.loading = false;
         $scope.error = "Unable to retrieve listings!\n + error";
       });
+    };
 
     /* Bind the success message to the scope if it exists as part of the current state */
     if($stateParams.successMessage) {

@@ -31,7 +31,7 @@ angular.module('listings').config(['$stateProvider', '$urlRouterProvider',
       })
       .state('listings.map', {
         url: '/map',
-        templatUrl: 'app/views/map-listings.client.view.html'
+        templateUrl: 'app/views/map-listings.client.view.html'
       })
   } 
 ]);
