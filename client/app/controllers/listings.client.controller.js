@@ -74,11 +74,25 @@ angular.module('listings').controller('ListingsController', ['$scope', '$locatio
     };
 
     $scope.update = function(isValid) {
+
       /*
         Fill in this function that should update a listing if the form is valid. Once the update has 
         successfully finished, navigate back to the 'listing.list' state using $state.go(). If an error 
         occurs, pass it to $scope.error. 
        */
+      if (!isValid) {
+        $scope.$broadcast('show-errors-check-validity', 'articleForm');
+
+        return false;
+      }
+      var id = $stateParams.listingId;
+      Listings.update(id, $scope.listing)
+              .then(function(response) {
+                $state.go('listings.list', { successMessage: 'Listing succesfully created!' });
+              }, function(error) {  
+                $scope.error = 'Unable to update listing with id ' + error;
+                $scope.loading = false;
+              });
     };
 
     $scope.remove = function() {
@@ -86,6 +100,37 @@ angular.module('listings').controller('ListingsController', ['$scope', '$locatio
         Implement the remove function. If the removal is successful, navigate back to 'listing.list'. Otherwise, 
         display the error. 
        */
+       var id = $stateParams.listingId;
+       Listings.delete(id)
+              .then(function(response) {
+                $state.go('listings.list', { successMessage: 'Listing succesfully created!' });
+              }, function(error) {  
+                $scope.error = 'Unable to retrieve listing with id "' + id + '"\n' + error;
+                $scope.loading = false;
+              });
+    };
+
+    $scope.getAllForMap = function(){ 
+    // user-created function for map-listings.client.view.html
+      $scope.error = null;
+
+      /* set loader*/
+      $scope.loading = true;
+      $scope.listings = [];
+      /* Get all the listings, then push it to the scope */
+      Listings.getAll()
+            .then(function(response){
+              $scope.loading = false; //remove loader
+              response.data.forEach(function(listing){
+              if(listing.coordinates) {
+                $scope.listings.push(listing);
+            }
+            });
+
+      }, function(error){
+        $scope.loading = false;
+        $scope.error = "Unable to retrieve listings!\n + error";
+      });
     };
 
     /* Bind the success message to the scope if it exists as part of the current state */
@@ -101,5 +146,6 @@ angular.module('listings').controller('ListingsController', ['$scope', '$locatio
       }, 
       zoom: 14
     }
+
   }
 ]);
