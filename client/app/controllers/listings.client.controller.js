@@ -110,9 +110,32 @@ angular.module('listings').controller('ListingsController', ['$scope', '$locatio
     };
     };
 
+    $scope.getAllForMap = function(){ 
+    // user-created function for map-listings.client.view.html
+      $scope.error = null;
+
+      /* set loader*/
+      $scope.loading = true;
+      $scope.listings = [];
+      /* Get all the listings, then push it to the scope */
+      Listings.getAll()
+            .then(function(response){
+              $scope.loading = false; //remove loader
+              response.data.forEach(function(listing){
+              if(listing.coordinates) {
+                $scope.listings.push(listing);
+            }
+            });
+
+      }, function(error){
+        $scope.loading = false;
+        $scope.error = "Unable to retrieve listings!\n + error";
+      });
+
     /* Bind the success message to the scope if it exists as part of the current state */
     if($stateParams.successMessage) {
       $scope.success = $stateParams.successMessage;
+
     }
 
     /* Map properties */
